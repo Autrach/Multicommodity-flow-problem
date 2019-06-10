@@ -1,4 +1,5 @@
 cmake_minimum_required (VERSION 2.6)
 project (MCF)
 set (CMAKE_CXX_STANDARD 17)
+set(CMAKE_BUILD_TYPE Debug)
 add_executable(MCF main.cpp Graph.cpp MCFSolver.cpp)

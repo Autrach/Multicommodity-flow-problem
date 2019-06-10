@@ -23,7 +23,7 @@ bool Graph::checkIfArcCanBeInserted(int sourceNode, int sinkNode, int capacity, 
         return false;
     }
     for(int i = 0; i < arcVector.size(); i++){
-        if(arcVector[i].sourceNode == sourceNode && arcVector[i].sinkNode){
+        if(arcVector[i].sourceNode == sourceNode && arcVector[i].sinkNode == sinkNode){
                 std::cout << "podany łuk już istnieje" << std::endl;
                 return false;
         }
@@ -32,4 +32,7 @@ bool Graph::checkIfArcCanBeInserted(int sourceNode, int sinkNode, int capacity, 
 }
 int Graph::getNodeCount(){
     return nodeCount;
+}
+std::vector <Arc> Graph::getArcVector(){
+    return arcVector;
 }
