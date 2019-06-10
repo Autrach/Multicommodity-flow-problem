@@ -36,3 +36,43 @@ int Graph::getNodeCount(){
 std::vector <Arc> Graph::getArcVector(){
     return arcVector;
 }
+int Graph::getArcCost(int sourceNode, int sinkNode){
+    for (auto &arc : arcVector){  
+        if (arc.sinkNode == sinkNode && arc.sourceNode == sourceNode){
+            return arc.cost;
+        }
+    }
+    return -999999;
+}
+
+int Graph::getArcCapacity(int sourceNode, int sinkNode){
+        for (auto &arc : arcVector){  
+        if (arc.sinkNode == sinkNode && arc.sourceNode == sourceNode){
+            return arc.capacity;
+        }
+    }
+    return -999999;
+}
+void Graph::removeArc(int pos){
+    arcVector.erase(arcVector.begin()+pos);
+}
+
+
+void Graph::removeArc(int sourceNode, int sinkNode){
+    for(auto it = arcVector.begin(); it != arcVector.end(); ++it) { 
+        if (it->sinkNode == sinkNode && it->sourceNode == sourceNode){
+            arcVector.erase(it);
+            
+        }
+        
+    }
+}
+void Graph::reduceArcCapacity(int sinkNode, int sourceNode, int val){
+    for (auto &arc : arcVector){  
+        if (arc.sinkNode == sinkNode && arc.sourceNode == sourceNode){
+            arc.capacity -= val;
+        }
+    }
+    
+    
+}

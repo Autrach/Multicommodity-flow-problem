@@ -2,21 +2,25 @@
 
 
 MCFSolver::MCFSolver(){
-    for(int i = 0; i<10; i++){
+    for(int i = 0; i<6; i++){
         graphToSolve.addNode();
     }
-    graphToSolve.insertArc(0,9,5, 2.5);
-    graphToSolve.insertArc(1,8,5, 2.7);
+    graphToSolve.insertArc(0,2, 4, 4);
+    graphToSolve.insertArc(0,5, 3, 2);
     
 
-    graphToSolve.insertArc(3,4,5, 2.7);
-    
-    graphToSolve.insertArc(4,6,5, 2.7);
-    graphToSolve.insertArc(4,5,5, 2.7);
-    graphToSolve.insertArc(5,6,5, 2.7);
+    graphToSolve.insertArc(1,0, 7, 3);
+    graphToSolve.insertArc(1,2, 1, 2);
 
-    graphToSolve.insertArc(3,6,5, 2.7);
+    graphToSolve.insertArc(2,4, 4, 6);
+    graphToSolve.insertArc(2,5, 4, 5);
+
+    graphToSolve.insertArc(3,2, 2, 2);
+
+    graphToSolve.insertArc(4,3, 5, 1);
     
+    graphToSolve.insertArc(5,4, 2, 4);
+    graphToSolve.insertArc(5,1, 7, 5);
 }
 
 void MCFSolver::addCommodity(int sourceNode, int sinkNode, float flow){
@@ -48,13 +52,34 @@ void MCFSolver::printSolution(){
     }
 }
 void MCFSolver::calculateGreedy(){
+    std::vector<int> result;
     for(int i = 0; i<commodityVector.size(); i++){
-        generatePossiblePaths(commodityVector[i].sourceNode, commodityVector[i].sinkNode);
+        int sum=0;
+        while(true){
+            std::vector <std::vector<int>> pathsVector = generatePossiblePaths(commodityVector[i].sourceNode, commodityVector[i].sinkNode);
+            std::pair <int,int> posCostPath = getCheapestPath(pathsVector);
+            float currentFlow = usePath(pathsVector[posCostPath.first], commodityVector[i].flow);
+            std::cout<<currentFlow <<std::endl;
+            sum += posCostPath.second *currentFlow;
+            if(currentFlow == commodityVector[i].flow){
+                 break;
+            }
+            commodityVector[i].flow -= currentFlow;
+            
+            std::cout<<"obecny flow: "<<  currentFlow << " commodity flow: " << commodityVector[i].flow << std::endl;
+        }
+        result.push_back(sum);
+    }
+    std::cout << "Podsumowanie: "<< std::endl;
+
+    for(int i = 0 ; i<result.size(); i++ ){
+        std::cout << i << " składnia koszt: " << result[i] << std::endl;
     }
      
 }
 
-void MCFSolver::generatePossiblePaths(int sourceNode, int sinkNode){
+std::vector <std::vector<int>> MCFSolver::generatePossiblePaths(int sourceNode, int sinkNode){
+    std::vector <std::vector<int>> pathsVector;
     int nodesCount = graphToSolve.getNodeCount();
     bool *visited = new bool[nodesCount]; 
     int *path = new int[nodesCount];
@@ -62,35 +87,89 @@ void MCFSolver::generatePossiblePaths(int sourceNode, int sinkNode){
     for (int i = 0; i < nodesCount; i++){
         visited[i] = false; 
     }
-    generatePossiblePathsUtil(sourceNode, sinkNode, visited, path, pathIndex);
+    generatePossiblePathsUtil(sourceNode, sinkNode, visited, path, pathIndex, pathsVector);
+
+    for ( const std::vector<int> &v : pathsVector )
+    {
+        for ( const auto  &x : v ) {
+            std::cout << x << ' ';
+        }
+        std::cout << std::endl;
+    }
+
+	return pathsVector;
+
 }
 
 
 void MCFSolver::generatePossiblePathsUtil(int sourceNode, int sinkNode, bool visited[],
-                                                                     int path[], int & pathIndex){
-    std::cout << sourceNode<< std::endl;
+                                                                     int path[], int & pathIndex, std::vector <std::vector<int>> &pathsVector){
+    //std::cout << sourceNode<< std::endl;
     std::vector <Arc> arcVector = graphToSolve.getArcVector();
     path[pathIndex] = sourceNode;
     visited[sourceNode] = true;
     pathIndex++;
     
     if(sourceNode == sinkNode){
-        std::cout<< "znaleziono: " << std::endl;
+        std::vector <int> pathRow;
         for(int i = 0; i<pathIndex; i++){
-            std::cout << path[i]<< "->";
+            pathRow.push_back(path[i]);
         }
+        pathsVector.push_back(pathRow);
         std::cout << std::endl;
     }
     else{
         
         for(int i = 0; i<arcVector.size(); i++ ){
-            //std::cout << i << "   " << visited [i] << arcVector[i].sourceNode << "->" <<  arcVector[i].sinkNode << "   " << arcVector.size() <<  std::endl;
             if(!visited[arcVector[i].sinkNode] && arcVector[i].sourceNode == sourceNode){
-                generatePossiblePathsUtil(arcVector[i].sinkNode, sinkNode, visited, path, pathIndex);
+                generatePossiblePathsUtil(arcVector[i].sinkNode, sinkNode, visited, path, pathIndex, pathsVector);
             }
         }
     }
     pathIndex--; 
     visited[sourceNode] = false; 
-    //std::cout << "path index: " << pathIndex << std::endl;
+}
+std::pair<int,int> MCFSolver::getCheapestPath(std::vector <std::vector<int>> pathsVector){
+    int minPath=0;
+    int pathIndex= 0;
+    int i = 0;
+    for ( const std::vector<int> &v : pathsVector )
+    {
+        int currentPath = 0;
+        for ( int i = 0; i<v.size()-1; i++ ) {
+            currentPath += graphToSolve.getArcCost(v[i], v[i+1]);
+        }
+        if(minPath== 0){
+            minPath = currentPath;
+        }
+        if(minPath>currentPath){
+            minPath = currentPath;
+            pathIndex = i;
+        }
+        i++;
+    }
+    std::cout << minPath << "  " << pathIndex << std::endl;
+    return std::make_pair(pathIndex, minPath);
+}
+
+float MCFSolver::usePath(std::vector <int> path, int flow){
+    float minCapacity=0;
+    int index= 0;
+    for ( int i = 0; i<path.size()-1; i++ ) {
+            if(minCapacity > graphToSolve.getArcCapacity(path[i], path[i+1]) || minCapacity== 0){
+                minCapacity = graphToSolve.getArcCapacity(path[i], path[i+1]);
+                index = i;
+            }
+
+        }
+        if(minCapacity>flow){
+            minCapacity = flow;
+        }
+    for( int i = 0; i<path.size()-1; i++ ) {
+        graphToSolve.reduceArcCapacity(path[i], path[i+1], minCapacity);
+    }
+
+    graphToSolve.removeArc(path[index], path[index+1]);
+    std::cout << minCapacity << std::endl;
+    return minCapacity;
 }

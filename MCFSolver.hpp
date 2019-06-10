@@ -16,9 +16,11 @@ public:
     bool checkIfCommodityCanBeAdded(int sourceNode, int sinkNode, float flow);
     void printSolution();
     void calculateGreedy();
-    void generatePossiblePaths(int sourceNode, int sinkNode);
+    std::vector <std::vector<int>> generatePossiblePaths(int sourceNode, int sinkNode);
     void generatePossiblePathsUtil(int sourceNode, int sinkNode, bool visited[],
-                                                             int path[], int & pathIndex);
+                                                             int path[], int & pathIndex, std::vector <std::vector<int>> &pathsVector);
+    std::pair <int,int> getCheapestPath(std::vector <std::vector<int>> pathsVector);
+    float usePath(std::vector <int> path, int flow);
 private:
     std::vector <Commodity> commodityVector;
     Graph graphToSolve;
