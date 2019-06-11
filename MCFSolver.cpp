@@ -54,9 +54,15 @@ void MCFSolver::printSolution(){
 void MCFSolver::calculateGreedy(){
     std::vector<int> result;
     for(int i = 0; i<commodityVector.size(); i++){
+        std::cout << "Składnia numer " << i << std::endl;
         int sum=0;
         while(true){
             std::vector <std::vector<int>> pathsVector = generatePossiblePaths(commodityVector[i].sourceNode, commodityVector[i].sinkNode);
+            if(pathsVector.size()== 0){
+                std::cout << "brak dróg " << std::endl;
+                break;
+            }
+
             std::pair <int,int> posCostPath = getCheapestPath(pathsVector);
             float currentFlow = usePath(pathsVector[posCostPath.first], commodityVector[i].flow);
             std::cout<<currentFlow <<std::endl;
