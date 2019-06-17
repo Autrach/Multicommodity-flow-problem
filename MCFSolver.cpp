@@ -2,7 +2,7 @@
 
 
 MCFSolver::MCFSolver(){
-    for(int i = 0; i<6; i++){
+    /*for(int i = 0; i<6; i++){
         graphToSolve.addNode();
     }
     graphToSolve.insertArc(0,2, 4, 4);
@@ -20,7 +20,35 @@ MCFSolver::MCFSolver(){
     graphToSolve.insertArc(4,3, 5, 1);
     
     graphToSolve.insertArc(5,4, 2, 4);
-    graphToSolve.insertArc(5,1, 7, 5);
+    graphToSolve.insertArc(5,1, 7, 5);*/
+    
+    /*
+    for(int i = 0; i<5; i++){
+        graphToSolve.addNode();
+    }
+
+    graphToSolve.insertArc(0,2, 6, 5);
+    graphToSolve.insertArc(0,1, 10, 3);
+    graphToSolve.insertArc(1,2, 15, 1);
+    graphToSolve.insertArc(1,3, 5, 8);
+    graphToSolve.insertArc(2,3, 10, 2);
+    graphToSolve.insertArc(2,4, 5, 2);
+    graphToSolve.insertArc(3,4, 8, 4);
+   */
+
+    for(int i = 0; i<6; i++){
+        graphToSolve.addNode();
+    }
+    graphToSolve.insertArc(0,1, 7, 3);
+    graphToSolve.insertArc(0,2, 4, 4);
+    graphToSolve.insertArc(1,2, 6, 5);
+    graphToSolve.insertArc(1,3, 6, 5);
+    graphToSolve.insertArc(2,4, 8, 8);
+    graphToSolve.insertArc(2,3, 5, 9);
+    graphToSolve.insertArc(3,4, 20, 7);
+    graphToSolve.insertArc(3,5, 7, 2);
+    graphToSolve.insertArc(4,3, 10, 6);
+    graphToSolve.insertArc(4,5, 10, 9);
 }
 
 void MCFSolver::addCommodity(int sourceNode, int sinkNode, float flow){
