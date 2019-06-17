@@ -68,7 +68,8 @@ void MCFSolver::calculateGreedy(){
             std::cout<<currentFlow <<std::endl;
             sum += posCostPath.second *currentFlow;
             if(currentFlow == commodityVector[i].flow){
-                 break;
+                commodityVector[i].flow =0;
+                break;
             }
             commodityVector[i].flow -= currentFlow;
             
@@ -79,7 +80,11 @@ void MCFSolver::calculateGreedy(){
     std::cout << "Podsumowanie: "<< std::endl;
 
     for(int i = 0 ; i<result.size(); i++ ){
-        std::cout << i << " składnia koszt: " << result[i] << std::endl;
+        std::cout << i << " składnia koszt: " << result[i];
+        if(commodityVector[i].flow> 0){
+            std::cout << " brakujący przepływ: " << commodityVector[i].flow;
+        }
+        std::cout << std::endl;
     }
      
 }
@@ -168,14 +173,18 @@ float MCFSolver::usePath(std::vector <int> path, int flow){
             }
 
         }
-        if(minCapacity>flow){
+        if(minCapacity>=flow){
             minCapacity = flow;
+        }else
+        {
+            graphToSolve.removeArc(path[index], path[index+1]);
         }
+        
     for( int i = 0; i<path.size()-1; i++ ) {
         graphToSolve.reduceArcCapacity(path[i], path[i+1], minCapacity);
     }
 
-    graphToSolve.removeArc(path[index], path[index+1]);
+    
     std::cout << minCapacity << std::endl;
     return minCapacity;
 }
